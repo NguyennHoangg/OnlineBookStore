@@ -1,0 +1,30 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Online Book Store",
+  "homepage": "https://github.com/NguyennHoangg/OnlineBookStore#readme",
+  "bugs": {
+    "url": "https://github.com/NguyennHoangg/OnlineBookStore/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NguyennHoangg/OnlineBookStore.git"
+  },
+  "license": "ISC",
+  "author": "NguyenHuyHoang",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+  "start": "node app.js",
+  "dev": "nodemon app.js"
+},
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-handlebars": "^8.0.1",
+    "mssql": "^11.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
