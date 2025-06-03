@@ -1,6 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import './index.css';
 import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(
+    <React.StrictMode>
+        <BrowserRouter> {/* ✅ Wrap ở level cao nhất */}
+            <App />
+        </BrowserRouter>
+    </React.StrictMode>
+);
