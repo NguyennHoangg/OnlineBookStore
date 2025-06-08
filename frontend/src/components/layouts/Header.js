@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { User, ShoppingBag, Menu, X } from 'lucide-react';
+import AccountModal from '../common/AccountModal';
+import Modal from '../common/Modal';
 
 const navLink = [
   { name: 'Trang chủ', path: '/' },
@@ -12,11 +14,33 @@ const navLink = [
 function Navbar() {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [openDropdown, setOpenDropdown] = React.useState(false);
-  const [count, setCount] = React.useState(5);
+  const [count] = React.useState(8);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [modalContent, setModalContent] = React.useState('');
+
+  const handleOpenModal = linkName => {
+    setModalContent(linkName);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setModalContent('');
+  };
+
+  //Hàm lấy dữ liệu từ thẻ input
+  const handleSearch = e => {
+    if (e.key === 'Enter') {
+      // Xử lý tìm kiếm với searchQuery
+      console.log('Tìm kiếm:', searchQuery);
+      setSearchQuery('');
+    }
+  };
 
   // Đóng sidebar khi click ngoài
   React.useEffect(() => {
-    const handleClickOutside = (e) => {
+    const handleClickOutside = e => {
       if (
         sidebarOpen &&
         !e.target.closest('.sidebar') &&
@@ -30,13 +54,20 @@ function Navbar() {
     };
     window.addEventListener('click', handleClickOutside);
     return () => window.removeEventListener('click', handleClickOutside);
-  }, [sidebarOpen, openDropdown]);
+  }, [sidebarOpen, openDropdown, searchQuery]);
 
   return (
     <>
       <header className="bg-white border-b border-black text-black font-bold px-6 md:px-36 py-4 flex items-center justify-between relative z-50">
         {/* Logo */}
-        <div className="text-lg font-bold">Online Book Store</div>
+        <div className="flex items-center space-x-4">
+          <img
+            src="src/assets/image/logo.jpg"
+            alt="Logo"
+            className="w-16 h-16 rounded-full"
+          />
+          <div className="text-lg font-bold"> Nguyễn Hoàng</div>
+        </div>
 
         {/* Hamburger - chỉ hiện trên mobile */}
         <button
@@ -49,7 +80,7 @@ function Navbar() {
 
         {/* Menu desktop */}
         <nav className="hidden md:flex space-x-8">
-          {navLink.map((link) => (
+          {navLink.map(link => (
             <Link
               key={link.name}
               to={link.path}
@@ -67,6 +98,9 @@ function Navbar() {
             type="text"
             placeholder="Tìm kiếm..."
             className="p-2 rounded-full border border-black text-sm w-60"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            onKeyDown={handleSearch}
           />
           {/* User icon + dropdown */}
           <div className="relative dropdown">
@@ -82,20 +116,22 @@ function Navbar() {
             {openDropdown && (
               <div className="absolute right-0 mt-2 w-40 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
                 <div className="py-1">
-                  <Link
-                    to="/login"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setOpenDropdown(false)}
+                  <button
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                    onClick={() => {
+                      setOpenDropdown(false), handleOpenModal('Đăng nhập');
+                    }}
                   >
                     Đăng nhập
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setOpenDropdown(false)}
+                  </button>
+                  <button
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                    onClick={() => {
+                      setOpenDropdown(false), handleOpenModal('Đăng ký');
+                    }}
                   >
                     Đăng ký
-                  </Link>
+                  </button>
                 </div>
               </div>
             )}
@@ -124,17 +160,14 @@ function Navbar() {
       >
         {/* Close button */}
         <div className="flex justify-end p-4 border-b border-gray-300">
-          <button
-            onClick={() => setSidebarOpen(false)}
-            aria-label="Close menu"
-          >
+          <button onClick={() => setSidebarOpen(false)} aria-label="Close menu">
             <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Menu links */}
         <nav className="flex flex-col p-4 space-y-4">
-          {navLink.map((link) => (
+          {navLink.map(link => (
             <Link
               key={link.name}
               to={link.path}
@@ -150,6 +183,28 @@ function Navbar() {
       {/* Overlay đen mờ khi sidebar mở */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black opacity-30 z-40"></div>
+      )}
+      {/* Modal */}
+      {isModalOpen && (
+        <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+          <div className="p-4">
+            <h3 className="text-xl font-bold mb-4">{modalContent}</h3>
+            {modalContent === 'Đăng nhập' || modalContent === 'Đăng ký' ? (
+              <AccountModal />
+            ) : (
+              <div>
+                <p className="text-gray-600 mb-4">
+                  Thông tin về {modalContent} sẽ được hiển thị ở đây.
+                </p>
+                <div className="space-y-2">
+                  <p>• Chi tiết về dịch vụ</p>
+                  <p>• Hướng dẫn sử dụng</p>
+                  <p>• Liên hệ hỗ trợ</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </Modal>
       )}
     </>
   );
